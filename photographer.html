@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
+    <link href="css/photographer.css" rel="stylesheet" type="text/css" />
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <link
+      href="https://fonts.googleapis.com/css?family=DM+Sans&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <title>Fisheye - photographe</title>
+  </head>
+  <body>
+    <header>
+      <img src="assets/images/logo.png" class="logo" />
+    </header>
+
+    <main id="main">
+      <!--info du photographe + boutton contacter  -->
+      <div class="photograph-header"></div>
+    </main>
+
+    <!-- filter -->
+    <div class="blocMenu">
+      <label for="categorie">Trier par:</label>
+      <div class="select-style">
+        <select name="menu" id="menu-select">
+          <option class="option" value="popularité">Popularité</option>
+          <option class="option" value="date">Date</option>
+          <option class="option" value="titre">Titre</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- LightBox -->
+    <div class="bgroundLightbox">
+      <div class="flexLightbox">
+        <i class="fa-solid fa-chevron-left arrow left"></i>
+       <div class="boxandclose">
+        <div class="lightbox"></div>
+         <p class="closeLightbox">x</p>
+        </div>
+        <i class="fa-solid fa-chevron-right arrow right"></i>
+      </div>
+    </div>
+    <!-- Media section  -->
+    <div class="media_section"></div>
+
+    <!-- Formulaire modal  -->
+    <div id="contact_modal">
+      <div class="bground">
+        <div class="modal">
+          <header>
+            <div class="name-photographe">
+              <p class="textwillchange">Contactez-moi</p>
+            </div>
+            <img class="closeModal" src="assets/icons/close.svg" />
+          </header>
+          <form>
+            <div class="blocForm">
+              <div class="formData">
+                <label>Prénom</label>
+                <input
+                  class="text-control"
+                  type="text"
+                  id="first"
+                  name="first"
+                  minlength="2"
+                />
+              </div>
+              <div class="formData">
+                <label>Nom</label>
+                <input class="text-control" type="text" id="last" name="last" />
+              </div>
+              <div class="formData">
+                <label>E-mail</label>
+                <input
+                  class="text-control"
+                  type="email"
+                  id="email"
+                  name="email"
+                />
+              </div>
+              <div class="formData">
+                <label>Votre Message</label>
+                <textarea
+                  class="text-control"
+                  type="text"
+                  id="message"
+                  name="message"
+                ></textarea>
+              </div>
+            </div>
+            <button class="contact_button form_button">Envoyer</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script src="scripts/pages/index.js"></script>
+    <script src="/scripts/pages/photographer.js"></script>
+    <script src="scripts/templates/photographer.js"></script>
+  </body>
+</html>
