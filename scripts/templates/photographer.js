@@ -1,19 +1,3 @@
-const lightbox = document.querySelector(".lightbox");
-const lightboxbg = document.querySelector(".bgroundLightbox");
-const buttonCloseLightbox = document.querySelector(".closeLightbox");
-
-  
-// Ouvre la lightbox
-function displayLightbox() {
-  lightbox.style.display = "block";
-  lightboxbg.style.display = "block";
-}
-// ferme la lightbox
-function closeLightbox() {
-  lightbox.style.display = "none";
-  lightboxbg.style.display = "none";
-}
-
 
 function photographerTemplate(data) {
   const { name, portrait, city, country, tagline, price, id } = data;
@@ -70,13 +54,7 @@ function photographerTemplate(data) {
 
 function mediaTemplate(data) {
   const { name, imageLink, title, likes } = data;
- 
-  const array = [ name, imageLink, title, likes ]
-
-  ;
-  // console.log(array)
- 
-  
+   
   let currentLikes = likes;
 
   const isVideo = imageLink.endsWith(".mp4"); // isVideo sera un fichier qui fini par mp4
@@ -108,25 +86,8 @@ function mediaTemplate(data) {
       
     const likeIcon = article.querySelector(".likeIcon");
     const likesCount = article.querySelector(".likesNumbers");
-    const imgMedia = article.querySelector(".media"); 
-    const videoMedia = article.querySelector(".videoMedia video"); 
-
-
-    if (imgMedia) {
-        imgMedia.addEventListener("click", () => {
-          displayLightbox(); 
-          showMediaInLightbox(); 
-          // console.log(imageLink)
-        });
-      }
-  
-      if (videoMedia) {
-        videoMedia.addEventListener("click", () => {
-          displayLightbox(); 
-          showMediaInLightbox();
-          // console.log(imageLink)
-        });
-      }
+    // const imgMedia = article.querySelector(".media"); 
+    // const videoMedia = article.querySelector(".videoMedia video"); 
 
   // LIKES //
         likeIcon.addEventListener("click", () => {
@@ -147,33 +108,8 @@ function mediaTemplate(data) {
     
     return article;
     }
-        // Gere le contenue de la lightbox
-    function showMediaInLightbox() {
-    lightbox.innerHTML = `
-      ${
-        isVideo
-          ? `
-          <video controls>
-               <source  src="${imageLink}" type="video/mp4">
-             </video>
-             </div>
-             ` // sinon on affiche la div image
-          : `<img class="media" src="${imageLink}" alt="Photo de ${name}">`
-      }`;
-    
-    }
    
-    //     // Ajoute l'evenement d'ouverture de la Modale et indique le media de showmedia
-    //
-   
-
-    buttonCloseLightbox.addEventListener("click", () => closeLightbox())
-
-    
-    // arrowLeft.addEventListener("click", () => navigateLightbox("prev"));
-    // arrowRight.addEventListener("click", () => navigateLightbox("next"));
-  
-  return { mediaDOM };
+  return {mediaDOM };
 }
 
 

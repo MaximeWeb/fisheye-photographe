@@ -1,6 +1,7 @@
 //    DOM ELEMENTS
 const photographerHeader = document.querySelector(".photograph-header");
-const mediaSection = document.querySelector(".media_section");   
+const mediaSection = document.querySelector(".media_section"); 
+const mediaSectionImg = document.querySelector(".media_section img");     
 const nameForm = document.querySelector(".name-photographe") ; 
 const form = document.querySelector("form");
 const firstName = form.querySelector('input[name="first"]');
@@ -12,6 +13,11 @@ const validated = document.querySelector(".validated p");
 const modal = document.querySelector(".modal");
 const textChanged = document.querySelector(".textwillchange");
 const modalbg = document.querySelector(".bground");
+// const imgMedia = document.querySelector(".media"); 
+// const videoMedia = document.querySelector(".videoMedia video"); 
+const lightbox = document.querySelector(".lightbox");
+const lightboxbg = document.querySelector(".bgroundLightbox");
+const buttonCloseLightbox = document.querySelector(".closeLightbox");
 
 
 const url = "data/photographers.json";  // Je cree une constante avec l'url de mon fichier json , qui va me servir pour fetch
@@ -30,10 +36,25 @@ async function fetchData(url) {   // Methode fetch pour recuperer des data
   }
 }
 
-
-
 const urlParams = new URLSearchParams(window.location.search);  // URLsearchParam pour analyser l'url 
 const photographerId = urlParams.get('id');                      // .get pour recuperer le parametre choisi , ici l'ID
+
+
+// Ouvre la lightbox
+function displayLightbox() {
+  lightbox.style.display = "block";
+  lightboxbg.style.display = "block";
+}
+// ferme la lightbox
+function closeLightbox() {
+  lightbox.style.display = "none";
+  lightboxbg.style.display = "none";
+}
+
+
+
+
+buttonCloseLightbox.addEventListener("click", () => closeLightbox())
 
 async function getPhotographerById(id) {          // ici on vien creer une fonction qui va recuperer un photographe grace a son ID
   const data = await fetchData(url);
@@ -60,11 +81,11 @@ async function displayPhotographerData() {                            // Mainten
 displayPhotographerData();
 
 
-
 async function getMediaByPhotographerId(photographerId) {       // ici on vien creer une fonction qui va recupérer des media via l'id du photographer
   const data = await fetchData(url);
    return data.media.filter((media) => media.photographerId === parseInt(photographerId));  // on utilise filter car il y'a plusieurs element a recuperer
 }
+
 
 function buildImageLink(media, photographerName) {    // je créer une fonction pour recupérer les images qui ce trouve dans un dossier asset   
   return `assets/photographers/${photographerName}/${media.image || media.video}` // avec les data du fichier json
@@ -75,53 +96,91 @@ async function displayMedia(sortedMedia) {
   const photographer = await getPhotographerById(photographerId); // Récupère les infos du photographe
   const stringName = photographer.name.toLowerCase().replace(" ", ""); // Adapter le nom pour le chemin du dossier
 
-  mediaSection.innerHTML = "";
+  mediaSection.innerHTML = ""; // Efface le contenu précédent
 
-  sortedMedia.forEach((media) => {
+  sortedMedia.forEach((media, index) => {
     const imageLink = buildImageLink(media, stringName); // Crée le lien vers l'image
     const mediaModel = mediaTemplate({ ...media, imageLink }); // Modèle du média
     const mediaCardDOM = mediaModel.mediaDOM(); // Génère le DOM pour chaque média
+  
     mediaSection.appendChild(mediaCardDOM); // Ajoute au conteneur des médias
+  
+    // Ajoute un événement pour afficher le média dans la lightbox
+    mediaCardDOM.addEventListener("click", () => {
+      currentMediaIndex = index;
+      console.log(index) // Met à jour l'index courant
+      displayLightbox(); // Ouvre la lightbox
+      updateLightboxContent(); // Affiche le contenu de la lightbox
+    });
   });
-
 }
+
 
 
 // function pour trié en function de la categorie
 async function modifCategories(event) {
-  const categorie = event.target.value; // on récupere la valeur sélectionné dans le menu
-  const mediaItems = await getMediaByPhotographerId(photographerId); // Récupère tous les médias liés au photographe
+  const categorie = event.target.value; // on récupère la valeur sélectionnée dans le menu
+  let mediaItems = await getMediaByPhotographerId(photographerId); // Récupère tous les médias liés au photographe
 
   let sortedMedia;
   switch (categorie) {
     case "popularité":
       sortedMedia = mediaItems.sort((a, b) => b.likes - a.likes); 
-      console.log(mediaItems)//  likes décroissant
+      console.log(mediaItems)
       break;
     case "date":
       sortedMedia = mediaItems.sort((a, b) => new Date(b.date) - new Date(a.date));
-      console.log(mediaItems) //date décroissante
+      console.log(mediaItems)
       break;
     case "titre":
       sortedMedia = mediaItems.sort((a, b) => a.title.localeCompare(b.title));
-      console.log(mediaItems) // Tri par ordre alphabetique
+      console.log(mediaItems)
       break;
     default:
+      
   }
 
+  // Mettez à jour mediaItems avec le tableau trié
+  
+  
   // Affiche les médias triés
   displayMedia(sortedMedia);
+  
+  // Réinitialise l'index du média courant pour ne pas rester sur un ancien index
+  currentMediaIndex = 0; // Réinitialise l'index de la lightbox
 }
 
+
+function resetCurrentMedia() {
+  currentMediaIndex = 0
+}
 
 let mediaItems = []; // Pour stocker les médias liés au photographe
 
 let currentMediaIndex = 0;
 
+
+async function updateLightboxContent() {
+  if (mediaItems.length > 0) {
+    const currentMedia = mediaItems[currentMediaIndex];
+    const photographer = await getPhotographerById(photographerId);
+    const stringName = photographer.name.toLowerCase().replace(" ", "");
+    const mediaLink = buildImageLink(currentMedia, stringName);
+
+    lightbox.innerHTML = `
+      ${
+        currentMedia.video
+          ? `<video controls><source src="${mediaLink}" type="video/mp4"></video>`
+          : `<img src="${mediaLink}" alt="${currentMedia.title}" />`
+      }
+      <p>${currentMedia.title}</p>
+    `;
+  }
+}
+
 async function switchPicModal(direction) {
   if (mediaItems.length === 0) {
     mediaItems = await getMediaByPhotographerId(photographerId);
-     // on vien recuperer tous les media du photographer in a array.
   }
 
   if (direction === "next") {
@@ -130,12 +189,7 @@ async function switchPicModal(direction) {
     currentMediaIndex = (currentMediaIndex - 1 + mediaItems.length) % mediaItems.length;
   }
 
-  const currentMedia = imageLink[currentMediaIndex];
-  const photographer = await getPhotographerById(photographerId);
-  const stringName = photographer.name.toLowerCase().replace(" ", "");
-  const mediaLink = buildImageLink(currentMedia, stringName);
- 
-  return console.log(mediaLink, currentMedia.title) 
+  updateLightboxContent(); // Met à jour le contenu de la lightbox
 }
 
 const arrowLeft = document.querySelector(".left");
@@ -148,68 +202,16 @@ arrowRight.addEventListener("click", () => switchPicModal("next"));
 
 // Evenement Change 
 const menuSelect = document.getElementById("menu-select");
-menuSelect.addEventListener("change", modifCategories);
+menuSelect.addEventListener("change", modifCategories, resetCurrentMedia);
 
 // Affichage initial des médias triés par popularité et affiche avec displayMedia
 async function initialDisplayMedia() {
-  const mediaItems = await getMediaByPhotographerId(photographerId);
-  console.log(mediaItems)
+  mediaItems = await getMediaByPhotographerId(photographerId); // Récupère les médias et les stocke
   const sortedByPopularity = mediaItems.sort((a, b) => b.likes - a.likes);
   displayMedia(sortedByPopularity);
 }
 
 initialDisplayMedia();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
