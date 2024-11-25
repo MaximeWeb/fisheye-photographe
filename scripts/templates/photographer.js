@@ -49,7 +49,18 @@ function photographerTemplate(data) {
     return article;
   }
 
-  return { getUserCardDOM, displayDataPhotographer, nameFormTemplate };
+  function pricePhotographer() {
+    const article = document.createElement("article");
+    article.innerHTML = `    
+        <div>
+        <p>${price}€/ jours</p>
+        </div>
+      `;
+
+    return article;
+  }
+
+  return { getUserCardDOM, displayDataPhotographer, nameFormTemplate, pricePhotographer };
 }
 
 function mediaTemplate(data) {
@@ -86,8 +97,6 @@ function mediaTemplate(data) {
       
     const likeIcon = article.querySelector(".likeIcon");
     const likesCount = article.querySelector(".likesNumbers");
-    // const imgMedia = article.querySelector(".media"); 
-    // const videoMedia = article.querySelector(".videoMedia video"); 
 
   // LIKES //
         likeIcon.addEventListener("click", () => {
@@ -97,19 +106,22 @@ function mediaTemplate(data) {
         likeIcon.classList.remove("fa-regular");
         likeIcon.classList.add("fa-solid");
         currentLikes++;
+        
       } else {
         likeIcon.classList.remove("fa-solid");
         likeIcon.classList.add("fa-regular");
         currentLikes--;
+        
       }
       likesCount.textContent = currentLikes;
+
     });
 
     
     return article;
     }
-   
-  return {mediaDOM };
-}
+    
+    return { mediaDOM };
+  }
 
 

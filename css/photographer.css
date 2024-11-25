@@ -72,6 +72,31 @@ text-align: justify;
     
 }
 
+/* total likes div */ 
+
+.totalLikesDiv {
+    position: fixed;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    bottom: 1px;
+    right: 20px;
+    height: 89px;
+    width: 376px ;
+    background-color: #DB8876;
+    border-radius: 5px;
+    font-weight: bold;
+
+}
+
+.totalLikesflex {
+    display: flex;
+    align-items: center;
+    width: 50px;
+    justify-content: space-around;
+    
+}
+
 /* Menu deroulant */
 
 .blocMenu {

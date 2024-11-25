@@ -1,6 +1,9 @@
 // DOM ELEMENTS
 const photographerHeader = document.querySelector(".photograph-header");
 const mediaSection = document.querySelector(".media_section"); 
+const likesDiv = document.querySelector(".totalLikesDiv"); 
+const totalLikesDiv = document.querySelector(".totalLikes"); 
+const priceDiv = document.querySelector(".price"); 
 const nameForm = document.querySelector(".name-photographe"); 
 const form = document.querySelector("form");
 const firstName = form.querySelector('input[name="first"]');
@@ -20,6 +23,9 @@ const arrowLeft = document.querySelector(".left");
 const arrowRight = document.querySelector(".right");
 
 const url = "data/photographers.json";  // Mon url 
+
+
+
 
 // Fetch JSON data
 async function fetchData(url) { // Fetch qui va recupére mes data et les convertir en json
@@ -51,6 +57,11 @@ async function displayPhotographerData() {
     // Add photographer name to form
     const nameDOM = photographerModel.nameFormTemplate();                  // ici on va récupérer uniquement le nom du photogtaphe pour l'afficher
     nameForm.appendChild(nameDOM);
+
+    const priceDOM = photographerModel.pricePhotographer();                  // ici on va récupérer uniquement le nom du photogtaphe pour l'afficher
+    priceDiv.appendChild(priceDOM);
+
+
   } else {
     console.error(`Photographer with ID ${photographerId} not found.`);
   }
@@ -79,18 +90,18 @@ async function updateLightboxContent(index) {
   lightbox.innerHTML = `
     ${
       currentMedia.video
-        ? `<video controls><source src="${mediaLink}" type="video/mp4"></video>`
+        ? `<video controls>
+        <source src="${mediaLink}" type="video/mp4">
+        </video>`
         : `<img src="${mediaLink}" alt="Image ${currentMedia.title}" />`
     }
     <p>${currentMedia.title}</p>
   `;
 }
 
-
-
 function displayLightbox(index) {
-  currentMediaIndex = index; // Définir l'index de l'élément cliqué
-  updateLightboxContent(currentMediaIndex); // Mettre à jour la lightbox
+  currentMediaIndex = index; // On vien définir l'index du current
+  updateLightboxContent(currentMediaIndex); // On met a jour la lightbox avec ma fonction updateLightbox
   lightbox.style.display = "block";
   lightboxbg.style.display = "block";
 }
@@ -115,34 +126,61 @@ arrowRight.addEventListener("click", () => {
   updateLightboxContent(currentMediaIndex);
 });
 
-// Display media
+document.addEventListener("keydown", (event) => {
+  if (lightbox.style.display === "block") {
+    if (event.key === "ArrowRight") {
+      currentMediaIndex = (currentMediaIndex + 1) % mediaItems.length; 
+      updateLightboxContent(currentMediaIndex); 
+    } else if (event.key === "ArrowLeft") {
+      currentMediaIndex = (currentMediaIndex - 1 + mediaItems.length) % mediaItems.length; 
+      updateLightboxContent(currentMediaIndex);
+    }
+  }
+});
+
 async function displayMedia(sortedMedia) {
   const photographer = await getPhotographerById(photographerId);
   const stringName = photographer.name.toLowerCase().replace(" ", "");
 
-  mediaSection.innerHTML = ""; 
+  // Calculer le total des likes de tous les médias
+ 
 
-  sortedMedia.forEach((media, index) => {            // mon for each va recuperer tous les media et index 
+  const totalLikes = sortedMedia.reduce((acc, media) => acc + media.likes, 0);
+  console.log(totalLikes)
+
+  let currentTotalLikes = 0;
+  currentTotalLikes = totalLikes
+
+  totalLikesDiv.innerHTML = `   
+  <div class="totalLikesflex"> 
+    <p>${totalLikes}</p> <i class="fa-solid fa-heart "></i>
+    </div>
+  `;
+  
+
+  // Affichage des cartes de médias
+  sortedMedia.forEach((media, index) => {
     const imageLink = buildImageLink(media, stringName);
     const mediaModel = mediaTemplate({ ...media, imageLink });
     const mediaCardDOM = mediaModel.mediaDOM();
-    console.log(index)
 
+    // Ajouter chaque média à la section dédiée
     mediaSection.appendChild(mediaCardDOM);
 
     const mediaElement = mediaCardDOM.querySelector("img, video");
 
+    // Ajouter l'événement pour afficher la lightbox
     mediaElement.addEventListener("click", () => {
-      displayLightbox(index); // on vien récupéré l'index en fonction du media sur lequel on a cliqué
+      displayLightbox(index); // Afficher la lightbox avec l'index du média
     });
   });
 }
 
-// Initial media display sorted by popularity
+
 async function initialDisplayMedia() {
-  mediaItems = await getMediaByPhotographerId(photographerId);
+  mediaItems = await getMediaByPhotographerId(photographerId); // mediaItems renvoie un tableau des media 
   console.log(mediaItems)
-  const sortedByPopularity = mediaItems.sort((a, b) => b.likes - a.likes);
+  const sortedByPopularity = mediaItems.sort((a, b) => b.likes - a.likes); // on tri le tableau par popularité initialement
   displayMedia(sortedByPopularity);
 }
 initialDisplayMedia();
