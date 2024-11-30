@@ -165,6 +165,7 @@ document.addEventListener("keydown", (event) => {
 
 menuSelect.addEventListener("change", modifCategories);
 
+
 // AFFICHAGE DES MEDIAS
 
 async function displayMedia(sortedMedia) {
@@ -172,27 +173,83 @@ async function displayMedia(sortedMedia) {
   const stringName = photographer.name.toLowerCase().replace(" ", "");
 
   const totalLikes = sortedMedia.reduce((acc, media) => acc + media.likes, 0);
-  
-
-  let currentTotalLikes = 0;
-  currentTotalLikes = totalLikes
- 
-  contentLikes.textContent = currentTotalLikes
+  let currentTotalLikes = totalLikes;
+  contentLikes.textContent = currentTotalLikes;
 
   // Affichage des cartes de médias
-  sortedMedia.forEach((media, index) => {
+  sortedMedia.forEach((media) => {
     const mediaLink = buildImageLink(media, stringName);
     const mediaModel = mediaTemplate({ ...media, mediaLink });
     const mediaCardDOM = mediaModel.mediaDOM();
 
-    // Ajouter chaque média à ma section mediasection
+    // Ajouter chaque média à la section mediaSection
     mediaSection.appendChild(mediaCardDOM);
+  });
 
-    const mediaElement = mediaCardDOM.querySelector("img, video");
+  // Récupérer toutes les divs .blocMedia après que le DOM soit mis à jour
+  const allMediaBlocks = document.querySelectorAll(".onFocus");
 
-    // Ajouter l'événement pour afficher la lightbox
+  // Variable pour suivre l'élément actif
+  let currentIndex = 0;
+
+  // Mettre le focus et la classe active sur le premier élément
+  if (allMediaBlocks.length > 0) {
+    allMediaBlocks[currentIndex].focus(); // Appliquer le focus
+    allMediaBlocks[currentIndex].classList.add("active"); // Ajouter la classe active
+  }
+
+  // Gestion de l'événement keydown pour naviguer entre les éléments avec les flèches
+  document.addEventListener("keydown", (event) => {
+    if (allMediaBlocks.length === 0) return;
+
+    // Retirer la classe active de l'élément actuel et enlever le focus
+    allMediaBlocks[currentIndex].classList.remove("active");
+    allMediaBlocks[currentIndex].blur();
+
+    // Navigation avec les flèches droite et gauche
+    switch (event.key) {
+      case "ArrowRight": // Flèche droite : Aller au prochain média
+        currentIndex = (currentIndex + 1) % allMediaBlocks.length;
+        break;
+
+      case "ArrowLeft": // Flèche gauche : Aller au média précédent
+        currentIndex = (currentIndex - 1 + allMediaBlocks.length) % allMediaBlocks.length;
+        break;
+
+        case "Enter":
+          if (allMediaBlocks[currentIndex].classList.contains("media")) {
+            displayLightbox(currentIndex);
+          }  if (allMediaBlocks[currentIndex].classList.contains("contact_button")) {
+           displayModal();}
+           if (allMediaBlocks[currentIndex].classList.contains("likeIcon")) {
+            totalLikesDiv.textContent++
+            totalLikesDiv.innerHTML += ` <i class="fa-solid fa-heart"></i>`
+          } if (allMediaBlocks[currentIndex].classList.contains("select-style")) {
+            menuSelect.focus()
+           menuSelect.click()
+          }
+          
+          ;
+    break;
+      default:
+        return; // Ignorer les autres touches
+    }
+
+    // Ajouter la classe active à l'élément sélectionné et lui donner le focus
+    allMediaBlocks[currentIndex].classList.add("active");
+    allMediaBlocks[currentIndex].focus();
+
+    // Empêcher le comportement par défaut des flèches
+    event.preventDefault();
+  });
+
+  // Ajouter un événement de click pour afficher la lightbox
+  allMediaBlocks.forEach((mediaBlock, index) => {
+    const mediaElement = mediaBlock.querySelector("img, video");
+
+    // Ajouter l'événement pour afficher la lightbox au click
     mediaElement.addEventListener("click", () => {
-      displayLightbox(index); // Afficher la lightbox avec l'index du média 
+      displayLightbox(index); // Afficher la lightbox avec l'index du média
     });
   });
 }

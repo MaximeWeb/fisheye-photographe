@@ -7,8 +7,9 @@ function photographerTemplate(data) {     // Template des data PHOTOGRAPHERS et 
   // INDEX.HTML     PHOTOS DE PROFIL + INFOS DES PHOTOGRAPHES
   function getUserCardDOM() {
     const article = document.createElement("article"); // j'utilise innerHtml pour inserer plusieurs elements html directement
-    article.innerHTML = `    
-        <div class="imgContainer focusa">
+    article.innerHTML = ` 
+    <div class="allContainer tabindex="0">   
+        <div class="imgContainer">
        <a href="photographer.html?id=${id}">
           <img src="${picture}" alt="Photo de ${name}">
           <h2>${name}</h2>
@@ -17,6 +18,7 @@ function photographerTemplate(data) {     // Template des data PHOTOGRAPHERS et 
         <h3>${city}, ${country}</h3>
         <h4>${tagline}</h4>
         <h5>${price}€/jour</h5>
+        </div>
       `;
 
     return article;
@@ -31,7 +33,7 @@ function photographerTemplate(data) {     // Template des data PHOTOGRAPHERS et 
         <h3>${city}, ${country}</h3>
         <h4>${tagline}</h4>
       </div>
-      <button class="contact_button focus" onclick="displayModal()">Contactez-moi</button>  
+      <button class="contact_button onFocus" onclick="displayModal()">Contactez-moi</button>  
       <div class="imgFlexbox" >
        <img class="imgPhoto" src="${picture}" alt="Photo de ${name}">
     </div>
@@ -74,27 +76,32 @@ function mediaTemplate(data) {       // Template des data MEDIA et structure du 
   function mediaDOM() {
     const article = document.createElement("article");
     article.innerHTML = `
+    
         <div class="blocMedia">
           ${
             // ternaire si c'est un fichier qui fini par mp4 on affiche la div Video
             isVideo
-              ? `<div class="videoMedia">
+              ? `<div class="videoMedia onFocus">
               <video controls>
                    <source  src="${mediaLink}" type="video/mp4">
                  </video>
                  </div>
                  ` // sinon on affiche la div image
-              : `<img class="media" src="${mediaLink}" alt="Photo de ${name}">`
+              : `<img class="media onFocus" src="${mediaLink}" alt="Photo de ${name}">`
           }
           <div class="blocTitleLikes">
             <h2>${title}</h2>
             <p>
               <span class="likesNumbers">${currentLikes}</span> 
-              <i class="fa-regular fa-heart likeIcon"></i>
+              <i class="fa-regular fa-heart likeIcon onFocus"></i>
             </p>
           </div>
         </div>
+       
       `;
+
+
+      
       
     const likeIcon = article.querySelector(".likeIcon");
     const likesCount = article.querySelector(".likesNumbers");
