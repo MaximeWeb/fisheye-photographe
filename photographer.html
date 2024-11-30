@@ -22,13 +22,14 @@
 
     <main id="main">
       <!--info du photographe + boutton contacter  -->
-      <div class="photograph-header"></div>
+      <div class="photograph-header focus
+      "></div>
     </main>
 
     <!-- filter -->
-    <div class="blocMenu">
+    <div class="blocMenu ">
       <label for="categorie">Trier par:</label>
-      <div class="select-style">
+      <div class="select-style focus">
         <select name="menu" id="menu-select">
           <option class="option" value="popularité">Popularité</option>
           <option class="option" value="date">Date</option>
@@ -49,12 +50,17 @@
       </div>
     </div>
 
+  <!-- Bloc info like/price -->
     <div class="totalLikesDiv">
-      <div class="totalLikes"></div>
+      <div class="totalLikes">
+        <div class="totalLikesflex">
+          <p class="contentLikes"></p> <i class="fa-solid fa-heart"></i>
+        </div>
+      </div>
       <div class="price"></div>
     </div>
     <!-- Media section  -->
-    <div class="media_section"></div>
+    <div class="media_section focus"></div>
     
 
     <!-- Formulaire modal  -->
@@ -65,7 +71,7 @@
             <div class="name-photographe">
               <p class="textwillchange">Contactez-moi</p>
             </div>
-            <img class="closeModal" src="assets/icons/close.svg" />
+           <button class="closeEnter" ><img class="closeModal" tabindex="0"  src="assets/icons/close.svg" /> </button>
           </header>
           <form>
             <div class="blocForm">

@@ -1,5 +1,5 @@
-
-function photographerTemplate(data) {
+const images = document.querySelectorAll(".media, .videoMedia");
+function photographerTemplate(data) {     // Template des data PHOTOGRAPHERS et structure du html
   const { name, portrait, city, country, tagline, price, id } = data;
   
 
@@ -8,7 +8,7 @@ function photographerTemplate(data) {
   function getUserCardDOM() {
     const article = document.createElement("article"); // j'utilise innerHtml pour inserer plusieurs elements html directement
     article.innerHTML = `    
-        <div class="imgContainer">
+        <div class="imgContainer focusa">
        <a href="photographer.html?id=${id}">
           <img src="${picture}" alt="Photo de ${name}">
           <h2>${name}</h2>
@@ -20,6 +20,7 @@ function photographerTemplate(data) {
       `;
 
     return article;
+
   }
   // PHOTOGRAPHER.HTML     HEADER  INFO DU PHOTOGRAPHE LIE A L ID DE L URL
   function displayDataPhotographer() {
@@ -30,7 +31,7 @@ function photographerTemplate(data) {
         <h3>${city}, ${country}</h3>
         <h4>${tagline}</h4>
       </div>
-      <button class="contact_button" onclick="displayModal()">Contactez-moi</button>  
+      <button class="contact_button focus" onclick="displayModal()">Contactez-moi</button>  
       <div class="imgFlexbox" >
        <img class="imgPhoto" src="${picture}" alt="Photo de ${name}">
     </div>
@@ -63,12 +64,12 @@ function photographerTemplate(data) {
   return { getUserCardDOM, displayDataPhotographer, nameFormTemplate, pricePhotographer };
 }
 
-function mediaTemplate(data) {
-  const { name, imageLink, title, likes } = data;
+function mediaTemplate(data) {       // Template des data MEDIA et structure du html
+  const { name, mediaLink, title, likes } = data;
    
   let currentLikes = likes;
 
-  const isVideo = imageLink.endsWith(".mp4"); // isVideo sera un fichier qui fini par mp4
+  const isVideo = mediaLink.endsWith(".mp4"); // isVideo sera un fichier qui fini par mp4
 
   function mediaDOM() {
     const article = document.createElement("article");
@@ -79,11 +80,11 @@ function mediaTemplate(data) {
             isVideo
               ? `<div class="videoMedia">
               <video controls>
-                   <source  src="${imageLink}" type="video/mp4">
+                   <source  src="${mediaLink}" type="video/mp4">
                  </video>
                  </div>
                  ` // sinon on affiche la div image
-              : `<img class="media" src="${imageLink}" alt="Photo de ${name}">`
+              : `<img class="media" src="${mediaLink}" alt="Photo de ${name}">`
           }
           <div class="blocTitleLikes">
             <h2>${title}</h2>
@@ -97,6 +98,7 @@ function mediaTemplate(data) {
       
     const likeIcon = article.querySelector(".likeIcon");
     const likesCount = article.querySelector(".likesNumbers");
+    const contentLikes = document.querySelector(".contentLikes"); 
 
   // LIKES //
         likeIcon.addEventListener("click", () => {
@@ -106,22 +108,24 @@ function mediaTemplate(data) {
         likeIcon.classList.remove("fa-regular");
         likeIcon.classList.add("fa-solid");
         currentLikes++;
+        contentLikes.textContent++
         
       } else {
         likeIcon.classList.remove("fa-solid");
         likeIcon.classList.add("fa-regular");
         currentLikes--;
+        contentLikes.textContent--
         
       }
       likesCount.textContent = currentLikes;
 
     });
 
-    
     return article;
     }
-    
-    return { mediaDOM };
-  }
+
+    return { mediaDOM};
+    }
 
 
+      

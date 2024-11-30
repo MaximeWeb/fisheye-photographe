@@ -4,6 +4,17 @@ const mediaSection = document.querySelector(".media_section");
 const likesDiv = document.querySelector(".totalLikesDiv"); 
 const totalLikesDiv = document.querySelector(".totalLikes"); 
 const priceDiv = document.querySelector(".price"); 
+const contentLikes = document.querySelector(".contentLikes"); 
+const menuSelect = document.getElementById("menu-select");
+// LIGHTBOX DOM ELEMENTS
+const lightbox = document.querySelector(".lightbox");
+const lightboxbg = document.querySelector(".bgroundLightbox");
+const textChanged = document.querySelector(".textwillchange");
+const buttonCloseLightbox = document.querySelector(".closeLightbox");
+const arrowLeft = document.querySelector(".left");
+const arrowRight = document.querySelector(".right");
+// FORMULAIRE DOM ELEMENTS
+const buttonCloseModal = document.querySelector(".closeModal")
 const nameForm = document.querySelector(".name-photographe"); 
 const form = document.querySelector("form");
 const firstName = form.querySelector('input[name="first"]');
@@ -11,19 +22,11 @@ const lastName = form.querySelector('input[name="last"]');
 const email = form.querySelector('input[name="email"]');
 const message = form.querySelector('textarea[name="message"]');
 const formDataElements = form.querySelectorAll(".formData");
-const menuSelect = document.getElementById("menu-select");
 const validated = document.querySelector(".validated p");
 const modal = document.querySelector(".modal");
 const modalbg = document.querySelector(".bground");
-const lightbox = document.querySelector(".lightbox");
-const lightboxbg = document.querySelector(".bgroundLightbox");
-const textChanged = document.querySelector(".textwillchange");
-const buttonCloseLightbox = document.querySelector(".closeLightbox");
-const arrowLeft = document.querySelector(".left");
-const arrowRight = document.querySelector(".right");
-
-const url = "data/photographers.json";  // Mon url 
-
+// URL FICHIER JSON
+const url = "data/photographers.json";  
 
 
 
@@ -41,6 +44,8 @@ async function fetchData(url) { // Fetch qui va recupére mes data et les conver
 
 const urlParams = new URLSearchParams(window.location.search);   // je vien crée un nouvelle url windows 
 const photographerId = urlParams.get('id');                   // et je recupere l'id de cette url 
+
+// PHOTOGRAPHERS DATA
 
 async function getPhotographerById(id) {                     // function qui va récupérer un id , on vien filtrer le tableau  
   const data = await fetchData(url);                            
@@ -68,65 +73,77 @@ async function displayPhotographerData() {
 }
 displayPhotographerData();
 
+// MEDIA PHOTOGRAPHERS DATA
+
 async function getMediaByPhotographerId(photographerId) {            //ici une fonction qui va récupéré les media de mon tableau json media
   const data = await fetchData(url);
   return data.media.filter((media) => media.photographerId === parseInt(photographerId));
 }
 
-function buildImageLink(media, photographerName) {         // ici on va crée notre lien dynamique pour récuperer mes assets
-  return `assets/photographers/${photographerName}/${media.image || media.video}`;
+function buildImageLink(media, photographerName) {
+  if (media.image) {
+    return `assets/photographers/${photographerName}/${media.image}`;
+  } else if (media.video) {
+    return `assets/photographers/${photographerName}/${media.video}`;
+  } else {
+    console.error("Invalid media type", media);
+    return '';
+  }
+}
+
+
+
+async function updateLightboxContent(index) {     // Fonction pour mettre à jour le contenu de la lightbox
+  const photographer = await getPhotographerById(photographerId);
+  const stringName = photographer.name.toLowerCase().replace(" ", "");
+
+  
+  const currentMediaIndex = mediaItems[index]; // Média actuel basé sur l'index
+  const mediaLink = buildImageLink(currentMediaIndex, stringName);
+
+  lightbox.innerHTML = `
+    ${
+      currentMediaIndex.video
+        ? `<video controls>
+        <source src="${mediaLink}" type="video/mp4">
+        </video>`
+        : `<img src="${mediaLink}" alt="Image ${currentMediaIndex.title}" />`
+    }
+    <p>${currentMediaIndex.title}</p>
+  `;
 }
 
 let currentMediaIndex = 0; // Index global pour suivre l'image courante dans la lightbox
 
-// Fonction pour mettre à jour le contenu de la lightbox
-async function updateLightboxContent(index) {
-  const photographer = await getPhotographerById(photographerId);
-  const stringName = photographer.name.toLowerCase().replace(" ", "");
-
-  const currentMedia = mediaItems[index]; // Média actuel basé sur l'index
-  const mediaLink = buildImageLink(currentMedia, stringName);
-
-  lightbox.innerHTML = `
-    ${
-      currentMedia.video
-        ? `<video controls>
-        <source src="${mediaLink}" type="video/mp4">
-        </video>`
-        : `<img src="${mediaLink}" alt="Image ${currentMedia.title}" />`
-    }
-    <p>${currentMedia.title}</p>
-  `;
-}
-
-function displayLightbox(index) {
+function displayLightbox(index) {  // ouvre la lightbox
   currentMediaIndex = index; // On vien définir l'index du current
   updateLightboxContent(currentMediaIndex); // On met a jour la lightbox avec ma fonction updateLightbox
   lightbox.style.display = "block";
   lightboxbg.style.display = "block";
+  
 }
 
-// Close lightbox
-function closeLightbox() {
+function closeLightbox() { // ferme la ligthbox
   lightbox.style.display = "none";
   lightboxbg.style.display = "none";
 }
 
+// EventListener
+
 buttonCloseLightbox.addEventListener("click", closeLightbox);
 
-arrowLeft.addEventListener("click", () => {
+arrowLeft.addEventListener("click", () => { // Navigation à gauche ligthbox
   currentMediaIndex = (currentMediaIndex - 1 + mediaItems.length) % mediaItems.length; // Boucle au dernier élément si on atteint le début
   updateLightboxContent(currentMediaIndex);
 });
 
-// Navigation à droite (suivant)
-arrowRight.addEventListener("click", () => {
+arrowRight.addEventListener("click", () => {// Navigation à droite ligthbox
   currentMediaIndex = (currentMediaIndex + 1) % mediaItems.length;// Boucle au premier élément si on atteint la fin
   console.log(currentMediaIndex) 
   updateLightboxContent(currentMediaIndex);
 });
 
-document.addEventListener("keydown", (event) => {
+document.addEventListener("keydown", (event) => {  // Navigation fléché lightbox
   if (lightbox.style.display === "block") {
     if (event.key === "ArrowRight") {
       currentMediaIndex = (currentMediaIndex + 1) % mediaItems.length; 
@@ -138,56 +155,49 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    // Empêcher l'envoi du formulaire si l'utilisateur presse "Enter"
+    closeModal()
+    closeLightbox();
+  } 
+});
+
+menuSelect.addEventListener("change", modifCategories);
+
+// AFFICHAGE DES MEDIAS
+
 async function displayMedia(sortedMedia) {
   const photographer = await getPhotographerById(photographerId);
   const stringName = photographer.name.toLowerCase().replace(" ", "");
 
-  // Calculer le total des likes de tous les médias
- 
-
   const totalLikes = sortedMedia.reduce((acc, media) => acc + media.likes, 0);
-  console.log(totalLikes)
+  
 
   let currentTotalLikes = 0;
   currentTotalLikes = totalLikes
-
-  totalLikesDiv.innerHTML = `   
-  <div class="totalLikesflex"> 
-    <p>${totalLikes}</p> <i class="fa-solid fa-heart "></i>
-    </div>
-  `;
-  
+ 
+  contentLikes.textContent = currentTotalLikes
 
   // Affichage des cartes de médias
   sortedMedia.forEach((media, index) => {
-    const imageLink = buildImageLink(media, stringName);
-    const mediaModel = mediaTemplate({ ...media, imageLink });
+    const mediaLink = buildImageLink(media, stringName);
+    const mediaModel = mediaTemplate({ ...media, mediaLink });
     const mediaCardDOM = mediaModel.mediaDOM();
 
-    // Ajouter chaque média à la section dédiée
+    // Ajouter chaque média à ma section mediasection
     mediaSection.appendChild(mediaCardDOM);
 
     const mediaElement = mediaCardDOM.querySelector("img, video");
 
     // Ajouter l'événement pour afficher la lightbox
     mediaElement.addEventListener("click", () => {
-      displayLightbox(index); // Afficher la lightbox avec l'index du média
+      displayLightbox(index); // Afficher la lightbox avec l'index du média 
     });
   });
 }
 
-
-async function initialDisplayMedia() {
-  mediaItems = await getMediaByPhotographerId(photographerId); // mediaItems renvoie un tableau des media 
-  console.log(mediaItems)
-  const sortedByPopularity = mediaItems.sort((a, b) => b.likes - a.likes); // on tri le tableau par popularité initialement
-  displayMedia(sortedByPopularity);
-}
-initialDisplayMedia();
-
-
-// Sort and filter media
-async function modifCategories(event) {
+async function modifCategories(event) {  // Trie en fonction de la catégorie , et affiche le resultat
   const categorie = event.target.value; // Récupère la catégorie sélectionnée
   let sortedMedia = await getMediaByPhotographerId(photographerId); // Récupère tous les médias liés au photographe
 
@@ -209,6 +219,8 @@ async function modifCategories(event) {
   // Met à jour la variable globale mediaItems avec les médias triés
   mediaItems = sortedMedia;
 
+  mediaSection.innerHTML = "";
+
   // Affiche les médias triés
   displayMedia(sortedMedia);
 
@@ -216,9 +228,14 @@ async function modifCategories(event) {
   currentMediaIndex = 0;
 }
 
-menuSelect.addEventListener("change", modifCategories);
+let mediaItems = []
 
-
+async function initialDisplayMedia() {
+   mediaItems = await getMediaByPhotographerId(photographerId);  // mediaItems renvoie un tableau comme promesse , le tableau de getMediaByPhotographerId
+  const sortedByPopularity = mediaItems.sort((a, b) => b.likes - a.likes); // on tri le tableau par popularité initialement
+  displayMedia(sortedByPopularity);
+}
+initialDisplayMedia();
 
 
 // FORMULAIRE 
@@ -250,6 +267,7 @@ function displayModal() {
   const modal = document.getElementById("contact_modal");
   modal.style.display = "block";
   modalbg.style.display = "block";
+  firstName.focus();
 }
 // Ferme le formulaire
 function closeModal() {
@@ -329,18 +347,55 @@ const validate = (event) => {
     form.classList.add("hidden");
     textChanged.textContent = "Votre formulaire a été envoyé a ";
     textChanged.style.fontSize = "22px";
+    closeEnter.focus()
   }
 };
 
-
-document.querySelector(".closeModal").addEventListener("click", () => {
+buttonCloseModal.addEventListener("click", () => {
   closeModal();
+});
+
+// Submit formulaire
+form.addEventListener("submit", validate);
+
+const  focusableElements =
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+ // select the modal by it's id
+
+const firstFocusableElement = modal.querySelectorAll(focusableElements)[0]; // get first element to be focused inside modal
+const focusableContent = modal.querySelectorAll(focusableElements);
+const lastFocusableElement = focusableContent[focusableContent.length - 1]; // get last element to be focused inside modal
+
+document.addEventListener('keydown', function(e) {
+  let isTabPressed = e.key === 'Tab' ;
+
+  if (!isTabPressed) {
+    return;
+  }
+  if (e.shiftKey) { // if shift key pressed for shift + tab combination
+    if (document.activeElement === firstFocusableElement) {
+      lastFocusableElement.focus(); // add focus for the last focusable element
+      e.preventDefault();
+    }
+  } else { // if tab key is pressed
+    if (document.activeElement === lastFocusableElement) { // if focused has reached to last focusable element then focus first focusable element after pressing tab
+      firstFocusableElement.focus(); // add focus for the first focusable element
+      e.preventDefault();
+    }
+  }
+});
+
+const closeEnter = document.querySelector(".closeEnter")
+
+closeEnter.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" ) { 
+   closeModal()
+  }
 });
 
 
 
-// Submit formulaire
-form.addEventListener("submit", validate);
+
 
 
 

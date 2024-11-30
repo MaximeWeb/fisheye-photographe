@@ -72,6 +72,12 @@ text-align: justify;
     
 }
 
+.active {
+    border: 2px solid #ff0000; 
+    transform: scale(1.1); 
+    transition: transform 0.3s ease-in-out; 
+}
+
 /* total likes div */ 
 
 .totalLikesDiv {
@@ -221,8 +227,18 @@ justify-content: center;
     width: 350px;
     height: 350px;
     object-fit: cover;
+   
 }
 
+/* /* .media_section img .active {
+    border: 2px solid #ff0000;  
+    transform: scale(1.1);  
+    transition: transform 0.3s ease-in-out;  
+  } */
+
+  /* .videoMedia .active {
+    
+  }  */
 
 .videoMedia {
   height: 350px;
@@ -310,6 +326,12 @@ justify-content: center;
     text-align: justify;
     margin: 0;
 }
+
+header button {
+  background: none;
+  border: none;
+}
+
 
 
 /* Modal Formulaire */

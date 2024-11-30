@@ -16,29 +16,22 @@ async function fetchData(url) {   // Methode fetch pour recuperer des data
   }
 }
 
-// Je vien recuperer les data de mon ficher json avec la function fetchData + mon URL
-async function getData() {
-  const data = await fetchData(url);
-  return data 
-}
-
-// Je crée maintenant une fonction qui va afficher les profils avec les photographe en parametres 
-async function displayPhotographers(photographers) {
+async function displayPhotographers(photographers) {  // Affiche les data PHOTOGRAPHERS de mon fichier json
  
   photographers.forEach((photographer) => {             // forEach pour afficher plusieurs profils 
     const photographerModel = photographerTemplate(photographer);
     const userCardDOM = photographerModel.getUserCardDOM();  // on appelle la function getUserCardDom qui ce trouve dans la function photographerTemplate
     photographersSection.appendChild(userCardDOM);            // qui va nous permettre d'afficher le template autant de fois qu'il y'a de photographe 
-  });                                                          // qui va apparaitre sous le parent photographerSection 
+  });   
+                                                         // qui va apparaitre sous le parent photographerSection 
 }
 
-// Fonction d'initialisation
-async function init() {
-  const { photographers } = await getData();           // On vien indiquer le parametre de la function displayPhotographer qui va afficher les
+async function init() { // On vien crée un fonction asynchrone pour lancer display avec les data recupérer par fetchData qui necessite une promesse 
+  const { photographers } = await fetchData(url);           // On vien indiquer le parametre de la function displayPhotographer qui va afficher les
   displayPhotographers(photographers);                  // data de mon ficher json 
 }
 
-init();
+init(); 
 
 
 
