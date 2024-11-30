@@ -177,7 +177,7 @@ async function displayMedia(sortedMedia) {
   contentLikes.textContent = currentTotalLikes;
 
   // Affichage des cartes de médias
-  sortedMedia.forEach((media) => {
+  sortedMedia.forEach((media, index) => {
     const mediaLink = buildImageLink(media, stringName);
     const mediaModel = mediaTemplate({ ...media, mediaLink });
     const mediaCardDOM = mediaModel.mediaDOM();
@@ -187,7 +187,7 @@ async function displayMedia(sortedMedia) {
   });
 
   // Récupérer toutes les divs .blocMedia après que le DOM soit mis à jour
-  const allMediaBlocks = document.querySelectorAll(".onFocus");
+  const allMediaBlocks = document.querySelectorAll(".blocMedia");
 
   // Variable pour suivre l'élément actif
   let currentIndex = 0;
@@ -217,18 +217,7 @@ async function displayMedia(sortedMedia) {
         break;
 
         case "Enter":
-          if (allMediaBlocks[currentIndex].classList.contains("media")) {
-            displayLightbox(currentIndex);
-          }  if (allMediaBlocks[currentIndex].classList.contains("contact_button")) {
-           displayModal();}
-           if (allMediaBlocks[currentIndex].classList.contains("likeIcon")) {
-            totalLikesDiv.textContent++
-            totalLikesDiv.innerHTML += ` <i class="fa-solid fa-heart"></i>`
-          } if (allMediaBlocks[currentIndex].classList.contains("select-style")) {
-            menuSelect.focus()
-           menuSelect.click()
-          }
-          
+          displayLightbox()
           ;
     break;
       default:
