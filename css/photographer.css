@@ -14,7 +14,6 @@
     align-items: center;
    
 }
-/*  */
 
 .photograph-header .textFlexbox {
     order: 1; 
@@ -85,8 +84,8 @@ text-align: justify;
 }
 
 .active {
-    transform: scale(1.1); /* Agrandit le bloc de 10% */
-    transition: transform 0.1s ease; /* Ajoute une transition fluide */
+    transform: scale(1.1);
+    transition: transform 0.3s ease; 
   }
 
 /* total likes div */ 
@@ -243,16 +242,6 @@ justify-content: center;
     object-fit: cover;
    
 }
-
-/* /* .media_section img .active {
-    border: 2px solid #ff0000;  
-    transform: scale(1.1);  
-    transition: transform 0.3s ease-in-out;  
-  } */
-
-  /* .videoMedia .active {
-    
-  }  */
 
 .videoMedia {
   height: 350px;
