@@ -1,11 +1,12 @@
 // DOM ELEMENTS
-const photographerHeader = document.querySelector(".photograph-header");
+const photographerHeader = document.querySelector(".parentBlocHeader");
 const mediaSection = document.querySelector(".media_section"); 
 const likesDiv = document.querySelector(".totalLikesDiv"); 
 const totalLikesDiv = document.querySelector(".totalLikes"); 
 const priceDiv = document.querySelector(".price"); 
 const contentLikes = document.querySelector(".contentLikes"); 
 const menuSelect = document.getElementById("menu-select");
+ 
 // LIGHTBOX DOM ELEMENTS
 const lightbox = document.querySelector(".lightbox");
 const lightboxbg = document.querySelector(".bgroundLightbox");
@@ -143,40 +144,56 @@ arrowRight.addEventListener("click", () => {// Navigation à droite ligthbox
   updateLightboxContent(currentMediaIndex);
 });
 
-document.addEventListener("keydown", (event) => {  // Navigation fléché lightbox
-  if (lightbox.style.display === "block") {
-    if (event.key === "ArrowRight") {
-      currentMediaIndex = (currentMediaIndex + 1) % mediaItems.length; 
-      updateLightboxContent(currentMediaIndex); 
-    } else if (event.key === "ArrowLeft") {
-      currentMediaIndex = (currentMediaIndex - 1 + mediaItems.length) % mediaItems.length; 
-      updateLightboxContent(currentMediaIndex);
-    }
-  }
-});
-
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") {
-    // Empêcher l'envoi du formulaire si l'utilisateur presse "Enter"
-    closeModal()
-    closeLightbox();
-  } 
-});
 
 menuSelect.addEventListener("change", modifCategories);
 
 
 // AFFICHAGE DES MEDIAS
 
+function setupMediaNavigation() {
+  const allMediaBlocksFocus = document.querySelectorAll(".onFocus"); // Médias focussables
+  let currentMediaIndex = 0; // Index de départ
+
+  // Ajouter un listener global pour la navigation
+  document.addEventListener("keydown", (event) => {
+    if (allMediaBlocksFocus.length === 0) return;
+    allMediaBlocksFocus[currentMediaIndex].blur();
+
+    // Navigation avec les flèches droite et gauche
+    switch (event.key) {
+      case "ArrowRight": // Flèche droite : Aller au prochain média
+        currentMediaIndex = (currentMediaIndex + 1) % allMediaBlocksFocus.length;
+        break;
+
+      case "ArrowLeft": // Flèche gauche : Aller au média précédent
+        currentMediaIndex = (currentMediaIndex - 1 + allMediaBlocksFocus.length) % allMediaBlocksFocus.length;
+        break;
+
+      case "Enter": // Appuyez sur "Entrée" pour ouvrir la lightbox
+        allMediaBlocksFocus[currentMediaIndex].click();
+        return; // Terminer ici pour ne pas exécuter le focus supplémentaire
+      default:
+        return; // Ignorer les autres touches
+    }
+
+    // donner le focus au nouvel élément
+    allMediaBlocksFocus[currentMediaIndex].focus();
+
+    // Empêcher le comportement par défaut des flèches
+    event.preventDefault();
+  });
+}
+
+// Appelez cette fonction après l'affichage des médias
 async function displayMedia(sortedMedia) {
   const photographer = await getPhotographerById(photographerId);
   const stringName = photographer.name.toLowerCase().replace(" ", "");
 
   const totalLikes = sortedMedia.reduce((acc, media) => acc + media.likes, 0);
-  let currentTotalLikes = totalLikes;
-  contentLikes.textContent = currentTotalLikes;
+  contentLikes.textContent = totalLikes;
 
   // Affichage des cartes de médias
+  mediaSection.innerHTML = ""; // Effacer l'ancien contenu
   sortedMedia.forEach((media, index) => {
     const mediaLink = buildImageLink(media, stringName);
     const mediaModel = mediaTemplate({ ...media, mediaLink });
@@ -184,63 +201,21 @@ async function displayMedia(sortedMedia) {
 
     // Ajouter chaque média à la section mediaSection
     mediaSection.appendChild(mediaCardDOM);
-  });
 
-  // Récupérer toutes les divs .blocMedia après que le DOM soit mis à jour
-  const allMediaBlocks = document.querySelectorAll(".blocMedia");
+    const mediaElement = mediaCardDOM.querySelector("img, video");
 
-  // Variable pour suivre l'élément actif
-  let currentIndex = 0;
-
-  // Mettre le focus et la classe active sur le premier élément
-  if (allMediaBlocks.length > 0) {
-    allMediaBlocks[currentIndex].focus(); // Appliquer le focus
-    allMediaBlocks[currentIndex].classList.add("active"); // Ajouter la classe active
-  }
-
-  // Gestion de l'événement keydown pour naviguer entre les éléments avec les flèches
-  document.addEventListener("keydown", (event) => {
-    if (allMediaBlocks.length === 0) return;
-
-    // Retirer la classe active de l'élément actuel et enlever le focus
-    allMediaBlocks[currentIndex].classList.remove("active");
-    allMediaBlocks[currentIndex].blur();
-
-    // Navigation avec les flèches droite et gauche
-    switch (event.key) {
-      case "ArrowRight": // Flèche droite : Aller au prochain média
-        currentIndex = (currentIndex + 1) % allMediaBlocks.length;
-        break;
-
-      case "ArrowLeft": // Flèche gauche : Aller au média précédent
-        currentIndex = (currentIndex - 1 + allMediaBlocks.length) % allMediaBlocks.length;
-        break;
-
-        case "Enter":
-          displayLightbox()
-          ;
-    break;
-      default:
-        return; // Ignorer les autres touches
-    }
-
-    // Ajouter la classe active à l'élément sélectionné et lui donner le focus
-    allMediaBlocks[currentIndex].classList.add("active");
-    allMediaBlocks[currentIndex].focus();
-
-    // Empêcher le comportement par défaut des flèches
-    event.preventDefault();
-  });
-
-  // Ajouter un événement de click pour afficher la lightbox
-  allMediaBlocks.forEach((mediaBlock, index) => {
-    const mediaElement = mediaBlock.querySelector("img, video");
-
-    // Ajouter l'événement pour afficher la lightbox au click
+    // Ajouter l'événement pour afficher la lightbox
     mediaElement.addEventListener("click", () => {
       displayLightbox(index); // Afficher la lightbox avec l'index du média
     });
+
+    // Ajouter la classe onFocus aux médias pour la navigation
+    mediaElement.classList.add("onFocus");
+    mediaElement.setAttribute("tabindex", "0"); // Rendre navigable avec le clavier
   });
+
+  // Mettre en place la navigation par clavier après affichage
+  setupMediaNavigation();
 }
 
 async function modifCategories(event) {  // Trie en fonction de la catégorie , et affiche le resultat
@@ -404,6 +379,30 @@ buttonCloseModal.addEventListener("click", () => {
 // Submit formulaire
 form.addEventListener("submit", validate);
 
+
+
+// Event Keydown
+
+document.addEventListener("keydown", (event) => {  // Navigation fléché lightbox
+  if (lightbox.style.display === "block") {
+    if (event.key === "ArrowRight") {
+      currentMediaIndex = (currentMediaIndex + 1) % mediaItems.length; 
+      updateLightboxContent(currentMediaIndex); 
+    } else if (event.key === "ArrowLeft") {
+      currentMediaIndex = (currentMediaIndex - 1 + mediaItems.length) % mediaItems.length; 
+      updateLightboxContent(currentMediaIndex);
+    }
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    // Empêcher l'envoi du formulaire si l'utilisateur presse "Enter"
+    closeModal()
+    closeLightbox();
+  } 
+});
+
 const  focusableElements =
     'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
  // select the modal by it's id
@@ -434,19 +433,60 @@ document.addEventListener('keydown', function(e) {
 const closeEnter = document.querySelector(".closeEnter")
 
 closeEnter.addEventListener("keydown", (event) => {
-  if (event.key === "Enter" ) { 
-   closeModal()
+  // Vérifiez si la touche pressée est "Enter"
+  if (event.key === "Enter") {
+    console.log("Enter pressed on closeEnter");
+
+    // Empêcher la propagation de l'événement pour éviter que le focus se déplace
+    event.preventDefault(); 
+    event.stopPropagation(); // Arrête la propagation de l'événement
+
+    // Fermer la modal
+    closeModal();  
   }
 });
 
+// Vérifiez si l'élément est bien ciblé et a le focus
+closeEnter.addEventListener("focus", () => {
+  console.log("closeEnter is focused");
+});
 
+// Optionnellement, donnez le focus à `.closeEnter` après l'ouverture de la modal
+closeEnter.focus(); 
 
+const contactButton = document.querySelector(".contact_button");
+  
+contactButton.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    hideAllErrors();
+    displayModal();
 
+    // Affiche le modal
+    setTimeout(() => {
+      const firstName = document.querySelector('input[name="first"]'); // Récupère l'input une fois le modal ajouté au DOM
+      if (firstName) {
+        firstName.focus(); // Applique le focus
+      } else {
+        console.error("L'élément firstName n'a pas été trouvé.");
+      }
+    }, 0); // Petite temporisation pour attendre que le modal soit rendu
+  }
+});
 
+contactButton.focus()
+ 
 
+const buttonTri = document.querySelector(".select-style");
 
+buttonTri.addEventListener("keydown", (event) => {
+  // Vérifiez si la touche pressée est "Enter"
+  if (event.key === "Enter") {
+    // Simuler un clic sur l'élément select pour ouvrir le menu
+    buttonTri.click();
+  }
+});
 
-
+ 
 
 
 

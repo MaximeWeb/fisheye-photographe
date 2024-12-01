@@ -26,19 +26,25 @@ function photographerTemplate(data) {     // Template des data PHOTOGRAPHERS et 
   }
   // PHOTOGRAPHER.HTML     HEADER  INFO DU PHOTOGRAPHE LIE A L ID DE L URL
   function displayDataPhotographer() {
-    const article = document.createElement("article");
+    const article = document.querySelector(".photograph-header");
+  
+    // Récupérer le bouton existant pour éviter de le perdre
+    const contactButton = article.querySelector(".contact_button");
+  
     article.innerHTML = `    
       <div class="textFlexbox" >
         <h2>${name}</h2>
         <h3>${city}, ${country}</h3>
         <h4>${tagline}</h4>
       </div>
-      <button class="contact_button onFocus" onclick="displayModal()">Contactez-moi</button>  
       <div class="imgFlexbox" >
-       <img class="imgPhoto" src="${picture}" alt="Photo de ${name}">
-    </div>
-      `;
-
+        <img class="imgPhoto" src="${picture}" alt="Photo de ${name}">
+      </div>
+    `;
+  
+    // Réinjecter le bouton dans le DOM
+    article.appendChild(contactButton);
+  
     return article;
   }
 
@@ -66,73 +72,78 @@ function photographerTemplate(data) {     // Template des data PHOTOGRAPHERS et 
   return { getUserCardDOM, displayDataPhotographer, nameFormTemplate, pricePhotographer };
 }
 
-function mediaTemplate(data) {       // Template des data MEDIA et structure du html
+function mediaTemplate(data) {
   const { name, mediaLink, title, likes } = data;
-   
   let currentLikes = likes;
-
-  const isVideo = mediaLink.endsWith(".mp4"); // isVideo sera un fichier qui fini par mp4
+  const isVideo = mediaLink.endsWith(".mp4");
 
   function mediaDOM() {
     const article = document.createElement("article");
     article.innerHTML = `
-    
-        <div class="blocMedia">
-          ${
-            // ternaire si c'est un fichier qui fini par mp4 on affiche la div Video
-            isVideo
-              ? `<div class="videoMedia onFocus">
+      <div class="blocMedia">
+        ${
+          isVideo
+            ? `<div class="videoMedia onFocus" tabindex="0">
               <video controls>
-                   <source  src="${mediaLink}" type="video/mp4">
-                 </video>
-                 </div>
-                 ` // sinon on affiche la div image
-              : `<img class="media onFocus" src="${mediaLink}" alt="Photo de ${name}">`
-          }
-          <div class="blocTitleLikes">
-            <h2>${title}</h2>
-            <p>
-              <span class="likesNumbers">${currentLikes}</span> 
-              <i class="fa-regular fa-heart likeIcon onFocus"></i>
-            </p>
-          </div>
+                <source "  src="${mediaLink}" type="video/mp4">
+              </video>
+            </div>`
+            : `<img class="media onFocus" tabindex="0" src="${mediaLink}" alt="Photo de ${name}">`
+        }
+        <div class="blocTitleLikes">
+          <h2>${title}</h2>
+          <p>
+            <span class="likesNumbers">${currentLikes}</span> 
+            <i class="fa-regular fa-heart likeIcon onFocus" tabindex="0"></i>
+          </p>
         </div>
-       
-      `;
+      </div>
+    `;
 
-
-      
-      
     const likeIcon = article.querySelector(".likeIcon");
     const likesCount = article.querySelector(".likesNumbers");
-    const contentLikes = document.querySelector(".contentLikes"); 
+    const contentLikes = document.querySelector(".contentLikes");
 
-  // LIKES //
-        likeIcon.addEventListener("click", () => {
-      // event au click de l'icon heart , on ajouté +1 au click et -1 si on reclik
+    // Event listener for click
+    likeIcon.addEventListener("click", () => {
       if (likeIcon.classList.contains("fa-regular")) {
-        // on change l'icon en fonction du click
         likeIcon.classList.remove("fa-regular");
         likeIcon.classList.add("fa-solid");
         currentLikes++;
-        contentLikes.textContent++
-        
+        contentLikes.textContent++;
       } else {
         likeIcon.classList.remove("fa-solid");
         likeIcon.classList.add("fa-regular");
         currentLikes--;
-        contentLikes.textContent--
-        
+        contentLikes.textContent--;
       }
       likesCount.textContent = currentLikes;
+    });
 
+    // Event listener for Enter key
+    likeIcon.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        if (likeIcon.classList.contains("fa-regular")) {
+          likeIcon.classList.remove("fa-regular");
+          likeIcon.classList.add("fa-solid");
+          currentLikes++;
+          contentLikes.textContent++;
+        } else {
+          likeIcon.classList.remove("fa-solid");
+          likeIcon.classList.add("fa-regular");
+          currentLikes--;
+          contentLikes.textContent--;
+        }
+        likesCount.textContent = currentLikes;
+        
+      }
     });
 
     return article;
-    }
+  }
 
-    return { mediaDOM};
-    }
+  return { mediaDOM };
+}
 
 
       

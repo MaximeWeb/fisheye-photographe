@@ -8,16 +8,28 @@
 .photograph-header {
     background-color: #FAFAFA;
     height: 300px;
-    margin: 0 100px 20px;
-   
-}
-
-.photograph-header article {
-   
+    margin: 0 50px 20px;
     display: flex;
     justify-content: space-around;
     align-items: center;
-    
+   
+}
+/*  */
+
+.photograph-header .textFlexbox {
+    order: 1; 
+  }
+  
+  .photograph-header .contact_button {
+    order: 2; 
+  }
+  
+  .photograph-header .imgFlexbox {
+    order: 3; 
+  }
+
+.textFlexbox {
+    margin-bottom: 20px;
 }
 
 .textFlexbox h2,h3,h4 {
@@ -47,7 +59,7 @@ text-align: justify;
     border-radius: 50%;
    height: 150px;
    width: 150px;
-   margin-top:60px
+   margin-top:20px
    
   }
 
@@ -62,7 +74,7 @@ text-align: justify;
     background-color: #901C1C;
     border-radius: 5px;
     cursor: pointer;
-    margin-top:50px;
+    margin-top:20px;
    
     
 }
@@ -73,10 +85,9 @@ text-align: justify;
 }
 
 .active {
-  
-    transform: scale(1.1); 
-    transition: transform 0.3s ease-in-out; 
-}
+    transform: scale(1.1); /* Agrandit le bloc de 10% */
+    transition: transform 0.1s ease; /* Ajoute une transition fluide */
+  }
 
 /* total likes div */ 
 
@@ -111,6 +122,9 @@ text-align: justify;
     align-items: center;
 }
 
+.select-style {
+   margin-left:20px
+}
 
 #menu-select {
     font-size: 20px;
@@ -123,7 +137,7 @@ text-align: justify;
     background-color: #901C1C;
     border-radius: 5px;
     cursor: pointer;
-    margin-left: 20px;
+    /* margin-left: 20px; */
     
 }
 #menu-select option {

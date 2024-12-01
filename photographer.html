@@ -22,13 +22,17 @@
 
     <main id="main">
       <!--info du photographe + boutton contacter  -->
-      <div class="photograph-header"></div>
+      <div class="parentBlocHeader">
+      <div class="photograph-header">
+        <button class="contact_button onFocus" tabindex="0" onclick="displayModal()">Contactez-moi</button>  
+      </div>
+    </div>
     </main>
 
     <!-- filter -->
     <div class="blocMenu ">
       <label for="categorie">Trier par:</label>
-      <div class="select-style onFocus">
+      <div class="select-style onFocus " tabindex="0">
         <select name="menu" id="menu-select">
           <option class="option" value="popularité">Popularité</option>
           <option class="option" value="date">Date</option>
@@ -70,7 +74,7 @@
             <div class="name-photographe">
               <p class="textwillchange">Contactez-moi</p>
             </div>
-           <button class="closeEnter" ><img class="closeModal" tabindex="0"  src="assets/icons/close.svg" /> </button>
+           <button class="closeEnter" ><img class="closeModal"   src="assets/icons/close.svg" /> </button>
           </header>
           <form>
             <div class="blocForm">
