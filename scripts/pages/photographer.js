@@ -29,8 +29,6 @@ const modalbg = document.querySelector(".bground");
 // URL FICHIER JSON
 const url = "data/photographers.json";  
 
-
-
 // Fetch JSON data
 async function fetchData(url) { // Fetch qui va recupére mes data et les convertir en json
   try {
@@ -67,7 +65,6 @@ async function displayPhotographerData() {
     const priceDOM = photographerModel.pricePhotographer();                  // ici on va récupérer uniquement le nom du photogtaphe pour l'afficher
     priceDiv.appendChild(priceDOM);
 
-
   } else {
     console.error(`Photographer with ID ${photographerId} not found.`);
   }
@@ -92,13 +89,10 @@ function buildImageLink(media, photographerName) {
   }
 }
 
-
-
 async function updateLightboxContent(index) {     // Fonction pour mettre à jour le contenu de la lightbox
   const photographer = await getPhotographerById(photographerId);
   const stringName = photographer.name.toLowerCase().replace(" ", "");
 
-  
   const currentMediaIndex = mediaItems[index]; // Média actuel basé sur l'index
   const mediaLink = buildImageLink(currentMediaIndex, stringName);
 
@@ -143,7 +137,6 @@ arrowRight.addEventListener("click", () => {// Navigation à droite ligthbox
   console.log(currentMediaIndex) 
   updateLightboxContent(currentMediaIndex);
 });
-
 
 menuSelect.addEventListener("change", modifCategories);
 
@@ -263,15 +256,13 @@ initialDisplayMedia();
 
 const originalTextChanged = textChanged.textContent;
 
-function showError(input, message) {
-  // fonction afin de faire apparaitre les messages d'erreur avec la classe css formData
+function showError(input, message) { // fonction afin de faire apparaitre les messages d'erreur avec la classe css formData
   const formData = input.closest(".formData"); // on va chercher l'element le plus proche du parent formData , donc les input .
   formData.setAttribute("data-error", message); // setAttribute afin de recuperer l'attribut data-error + ajouté un message d'erreur
   formData.setAttribute("data-error-visible", "true"); // ici on va faire apparaitre l'emplacement du message d'erreur
 }
 
-function hideError(input) {
-  // On va gérer le cas ou l'utilisateur est revenu sur le champ afin de modifier son erreur
+function hideError(input) {// On va gérer le cas ou l'utilisateur est revenu sur le champ afin de modifier son erreur
   const formData = input.closest(".formData");
   formData.setAttribute("data-error-visible", "false");
   formData.setAttribute("data-error", "");
@@ -379,8 +370,6 @@ buttonCloseModal.addEventListener("click", () => {
 // Submit formulaire
 form.addEventListener("submit", validate);
 
-
-
 // Event Keydown
 
 document.addEventListener("keydown", (event) => {  // Navigation fléché lightbox
@@ -405,8 +394,6 @@ document.addEventListener("keydown", (event) => {
 
 const  focusableElements =
     'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
- // select the modal by it's id
-
 const firstFocusableElement = modal.querySelectorAll(focusableElements)[0]; // get first element to be focused inside modal
 const focusableContent = modal.querySelectorAll(focusableElements);
 const lastFocusableElement = focusableContent[focusableContent.length - 1]; // get last element to be focused inside modal
@@ -451,9 +438,6 @@ closeEnter.addEventListener("focus", () => {
   console.log("closeEnter is focused");
 });
 
-// Optionnellement, donnez le focus à `.closeEnter` après l'ouverture de la modal
-closeEnter.focus(); 
-
 const contactButton = document.querySelector(".contact_button");
   
 contactButton.addEventListener("keydown", (event) => {
@@ -472,10 +456,7 @@ contactButton.addEventListener("keydown", (event) => {
     }, 0); // Petite temporisation pour attendre que le modal soit rendu
   }
 });
-
-contactButton.focus()
  
-
 const buttonTri = document.querySelector(".select-style");
 
 buttonTri.addEventListener("keydown", (event) => {

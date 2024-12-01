@@ -1,8 +1,6 @@
-const images = document.querySelectorAll(".media, .videoMedia");
 function photographerTemplate(data) {     // Template des data PHOTOGRAPHERS et structure du html
   const { name, portrait, city, country, tagline, price, id } = data;
   
-
   const picture = `assets/PhotographersIDPhotos/${portrait}`;
   // INDEX.HTML     PHOTOS DE PROFIL + INFOS DES PHOTOGRAPHES
   function getUserCardDOM() {
@@ -20,9 +18,7 @@ function photographerTemplate(data) {     // Template des data PHOTOGRAPHERS et 
         <h5>${price}€/jour</h5>
         </div>
       `;
-
     return article;
-
   }
   // PHOTOGRAPHER.HTML     HEADER  INFO DU PHOTOGRAPHE LIE A L ID DE L URL
   function displayDataPhotographer() {
