@@ -100,9 +100,9 @@ async function updateLightboxContent(index) {     // Fonction pour mettre à jou
     ${
       currentMediaIndex.video
         ? `<video controls>
-        <source src="${mediaLink}" type="video/mp4">
+        <source  src="${mediaLink}" type="video/mp4">
         </video>`
-        : `<img src="${mediaLink}" alt="Image ${currentMediaIndex.title}" />` // mon bloc html pour la ligthbox
+        : `<img " src="${mediaLink}" alt="Image ${currentMediaIndex.title}" />` // mon bloc html pour la ligthbox
     }
     <p>${currentMediaIndex.title}</p>
   `;
@@ -115,6 +115,7 @@ function displayLightbox(index) {  // ouvre la lightbox + updateLigthbox qui dem
   updateLightboxContent(currentMediaIndex); // On met a jour la lightbox avec ma fonction updateLightbox
   lightbox.style.display = "block";
   lightboxbg.style.display = "block";
+  
   
 }
 
@@ -415,6 +416,46 @@ document.addEventListener('keydown', function(e) {  // Navigation modal
   }
 });
 
+// const focusableElementsSelector =
+//   ' .boxandclose[tabindex="0"],.left[tabindex="0"],.right[tabindex="0"],,button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+// // Récupérer les éléments focusables de la lightbox
+// const focusableContentLightbox = lightbox.querySelectorAll(focusableElementsSelector);
+// const firstFocusableElementLightbox = focusableContentLightbox[0];
+// const lastFocusableElementLightbox = focusableContentLightbox[focusableContentLightbox.length - 1];
+
+// // Écouteur d'événement pour gérer la navigation au clavier
+// document.addEventListener('keydown', function (e) {
+//   if (lightbox.style.display !== 'block') {
+//     return; // Ignore si la lightbox est fermée
+//   }
+
+//   const isTabPressed = e.key === 'Tab';
+
+//   if (!isTabPressed) {
+//     return; // On ne fait rien si une autre touche est pressée
+//   }
+
+//   if (e.shiftKey) {
+//     // Gestion de Shift + Tab
+//     if (document.activeElement === firstFocusableElementLightbox) {
+//       e.preventDefault();
+//       lastFocusableElementLightbox.focus(); // Focus sur le dernier élément
+//     }
+//   } else {
+//     // Gestion de Tab
+//     if (document.activeElement === lastFocusableElementLightbox) {
+//       e.preventDefault();
+//       firstFocusableElementLightbox.focus(); // Focus sur le premier élément
+//     }
+//   }
+// });
+
+// // Mettre automatiquement le focus sur le premier élément à l'ouverture de la lightbox
+// if (focusableContentLightbox.length > 0) {
+//   firstFocusableElementLightbox.focus();
+// }
+
 const closeEnter = document.querySelector(".closeEnter")
 
 closeEnter.addEventListener("keydown", (event) => {
@@ -428,6 +469,51 @@ closeEnter.addEventListener("keydown", (event) => {
 
     // Fermer la modal
     closeModal();  
+  }
+});
+
+
+
+buttonCloseLightbox.addEventListener("keydown", (event) => {
+  // Vérifiez si la touche pressée est "Enter"
+  if (event.key === "Enter") {
+    console.log("Enter pressed on closeEnter");
+
+    // Empêcher la propagation de l'événement pour éviter que le focus se déplace
+    event.preventDefault(); 
+    event.stopPropagation(); // Arrête la propagation de l'événement
+
+    // Fermer la modal
+    closeLightbox();  
+  }
+});
+
+arrowLeft.addEventListener("keydown", (event) => {
+  // Vérifiez si la touche pressée est "Enter"
+  if (event.key === "Enter") {
+    console.log("Enter pressed on closeEnter");
+
+    // Empêcher la propagation de l'événement pour éviter que le focus se déplace
+    event.preventDefault(); 
+    event.stopPropagation(); // Arrête la propagation de l'événement
+
+    // Fermer la modal
+    currentMediaIndex = (currentMediaIndex - 1 + mediaItems.length) % mediaItems.length; // Boucle au dernier élément si on atteint le début
+  updateLightboxContent(currentMediaIndex);
+  }
+});
+arrowRight.addEventListener("keydown", (event) => {
+  // Vérifiez si la touche pressée est "Enter"
+  if (event.key === "Enter") {
+    console.log("Enter pressed on closeEnter");
+
+    // Empêcher la propagation de l'événement pour éviter que le focus se déplace
+    event.preventDefault(); 
+    event.stopPropagation(); // Arrête la propagation de l'événement
+
+    // Fermer la modal
+    currentMediaIndex = (currentMediaIndex + 1) % mediaItems.length;// Boucle au premier élément si on atteint la fin 
+    updateLightboxContent(currentMediaIndex); 
   }
 });
 
