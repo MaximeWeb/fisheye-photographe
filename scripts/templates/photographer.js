@@ -141,5 +141,3 @@ function mediaTemplate(data) {
   return { mediaDOM };
 }
 
-
-      

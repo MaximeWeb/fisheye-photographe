@@ -6,7 +6,7 @@ const totalLikesDiv = document.querySelector(".totalLikes");
 const priceDiv = document.querySelector(".price"); 
 const contentLikes = document.querySelector(".contentLikes"); 
 const menuSelect = document.getElementById("menu-select");
- 
+
 // LIGHTBOX DOM ELEMENTS
 const lightbox = document.querySelector(".lightbox");
 const lightboxbg = document.querySelector(".bgroundLightbox");
@@ -46,7 +46,7 @@ const photographerId = urlParams.get('id');                   // et je recupere 
 
 // PHOTOGRAPHERS DATA
 
-async function getPhotographerById(id) {                     // function qui va récupérer un id , on vien filtrer le tableau  
+async function getPhotographerById(id) {                     // function qui va récupérer un id , on vien filtrer le tableau  pour récupéré l'id 
   const data = await fetchData(url);                            
   return data.photographers.find((photographer) => photographer.id === parseInt(id));
 }
@@ -78,7 +78,7 @@ async function getMediaByPhotographerId(photographerId) {            //ici une f
   return data.media.filter((media) => media.photographerId === parseInt(photographerId));
 }
 
-function buildImageLink(media, photographerName) {
+function buildImageLink(media, photographerName) {  // Ma fonction afin de récupéré la routes des assets , on viendra adapté le nom du photographe pour qu'il soit identique
   if (media.image) {
     return `assets/photographers/${photographerName}/${media.image}`;
   } else if (media.video) {
@@ -91,18 +91,18 @@ function buildImageLink(media, photographerName) {
 
 async function updateLightboxContent(index) {     // Fonction pour mettre à jour le contenu de la lightbox
   const photographer = await getPhotographerById(photographerId);
-  const stringName = photographer.name.toLowerCase().replace(" ", "");
+  const stringName = photographer.name.toLowerCase().replace(" ", "");  // Adapte le nom du photographe pour le chemin des assets
 
-  const currentMediaIndex = mediaItems[index]; // Média actuel basé sur l'index
-  const mediaLink = buildImageLink(currentMediaIndex, stringName);
+  const currentMediaIndex = mediaItems[index]; // Média actuel basé sur l'index de mon array MediaItems
+  const mediaLink = buildImageLink(currentMediaIndex, stringName); // on vien adapté le chemin de mes assets 
 
-  lightbox.innerHTML = `
+  lightbox.innerHTML = `             
     ${
       currentMediaIndex.video
         ? `<video controls>
         <source src="${mediaLink}" type="video/mp4">
         </video>`
-        : `<img src="${mediaLink}" alt="Image ${currentMediaIndex.title}" />`
+        : `<img src="${mediaLink}" alt="Image ${currentMediaIndex.title}" />` // mon bloc html pour la ligthbox
     }
     <p>${currentMediaIndex.title}</p>
   `;
@@ -110,7 +110,7 @@ async function updateLightboxContent(index) {     // Fonction pour mettre à jou
 
 let currentMediaIndex = 0; // Index global pour suivre l'image courante dans la lightbox
 
-function displayLightbox(index) {  // ouvre la lightbox
+function displayLightbox(index) {  // ouvre la lightbox + updateLigthbox qui demande en parametre un index pour afficher le bon media
   currentMediaIndex = index; // On vien définir l'index du current
   updateLightboxContent(currentMediaIndex); // On met a jour la lightbox avec ma fonction updateLightbox
   lightbox.style.display = "block";
@@ -140,11 +140,10 @@ arrowRight.addEventListener("click", () => {// Navigation à droite ligthbox
 
 menuSelect.addEventListener("change", modifCategories);
 
-
 // AFFICHAGE DES MEDIAS
 
-function setupMediaNavigation() {
-  const allMediaBlocksFocus = document.querySelectorAll(".onFocus"); // Médias focussables
+function setupMediaNavigation() {      // fonction afin de navigué avec les fleches via la classe onFocus
+  const allMediaBlocksFocus = document.querySelectorAll(".onFocus"); // on recupere la classe onFocus
   let currentMediaIndex = 0; // Index de départ
 
   // Ajouter un listener global pour la navigation
@@ -166,7 +165,7 @@ function setupMediaNavigation() {
         allMediaBlocksFocus[currentMediaIndex].click();
         return; // Terminer ici pour ne pas exécuter le focus supplémentaire
       default:
-        return; // Ignorer les autres touches
+        return; 
     }
 
     // donner le focus au nouvel élément
@@ -177,17 +176,16 @@ function setupMediaNavigation() {
   });
 }
 
-// Appelez cette fonction après l'affichage des médias
-async function displayMedia(sortedMedia) {
+async function displayMedia(sortedMedia) {   // fonction que va affiché les media , et récuperer le bon index pour la ligthbox
   const photographer = await getPhotographerById(photographerId);
-  const stringName = photographer.name.toLowerCase().replace(" ", "");
+  const stringName = photographer.name.toLowerCase().replace(" ", "");  // j'arrange les noms des photographers into fichiers pour qu'ils soit identique a mon json
 
-  const totalLikes = sortedMedia.reduce((acc, media) => acc + media.likes, 0);
-  contentLikes.textContent = totalLikes;
+  const totalLikes = sortedMedia.reduce((acc, media) => acc + media.likes, 0); // ici on va affiché le nombre total des likes dans une div 
+  contentLikes.textContent = totalLikes; 
 
-  // Affichage des cartes de médias
-  mediaSection.innerHTML = ""; // Effacer l'ancien contenu
-  sortedMedia.forEach((media, index) => {
+ 
+  mediaSection.innerHTML = "";
+  sortedMedia.forEach((media, index) => {                  // boucle pour afficher les media
     const mediaLink = buildImageLink(media, stringName);
     const mediaModel = mediaTemplate({ ...media, mediaLink });
     const mediaCardDOM = mediaModel.mediaDOM();
@@ -195,14 +193,14 @@ async function displayMedia(sortedMedia) {
     // Ajouter chaque média à la section mediaSection
     mediaSection.appendChild(mediaCardDOM);
 
-    const mediaElement = mediaCardDOM.querySelector("img, video");
+    const mediaElement = mediaCardDOM.querySelector("img, video");  
 
     // Ajouter l'événement pour afficher la lightbox
-    mediaElement.addEventListener("click", () => {
+    mediaElement.addEventListener("click", () => {    
       displayLightbox(index); // Afficher la lightbox avec l'index du média
     });
 
-    // Ajouter la classe onFocus aux médias pour la navigation
+    // Ajoute la classe onFocus aux médias pour la navigation
     mediaElement.classList.add("onFocus");
     mediaElement.setAttribute("tabindex", "0"); // Rendre navigable avec le clavier
   });
@@ -211,7 +209,7 @@ async function displayMedia(sortedMedia) {
   setupMediaNavigation();
 }
 
-async function modifCategories(event) {  // Trie en fonction de la catégorie , et affiche le resultat
+async function modifCategories(event) {  // function qui Trie en fonction de la catégorie , et affiche le resultat
   const categorie = event.target.value; // Récupère la catégorie sélectionnée
   let sortedMedia = await getMediaByPhotographerId(photographerId); // Récupère tous les médias liés au photographe
 
@@ -244,8 +242,8 @@ async function modifCategories(event) {  // Trie en fonction de la catégorie , 
 
 let mediaItems = []
 
-async function initialDisplayMedia() {
-   mediaItems = await getMediaByPhotographerId(photographerId);  // mediaItems renvoie un tableau comme promesse , le tableau de getMediaByPhotographerId
+async function initialDisplayMedia() {    
+   mediaItems = await getMediaByPhotographerId(photographerId);  // mediaItems recupere le tableau de getMediaByPhotographerId comme promesse
   const sortedByPopularity = mediaItems.sort((a, b) => b.likes - a.likes); // on tri le tableau par popularité initialement
   displayMedia(sortedByPopularity);
 }
@@ -384,7 +382,7 @@ document.addEventListener("keydown", (event) => {  // Navigation fléché lightb
   }
 });
 
-document.addEventListener("keydown", (event) => {
+document.addEventListener("keydown", (event) => {    // touche echap pour fermer les modals
   if (event.key === "Escape") {
     // Empêcher l'envoi du formulaire si l'utilisateur presse "Enter"
     closeModal()
@@ -398,7 +396,7 @@ const firstFocusableElement = modal.querySelectorAll(focusableElements)[0]; // g
 const focusableContent = modal.querySelectorAll(focusableElements);
 const lastFocusableElement = focusableContent[focusableContent.length - 1]; // get last element to be focused inside modal
 
-document.addEventListener('keydown', function(e) {
+document.addEventListener('keydown', function(e) {  // Navigation modal
   let isTabPressed = e.key === 'Tab' ;
 
   if (!isTabPressed) {
@@ -431,11 +429,6 @@ closeEnter.addEventListener("keydown", (event) => {
     // Fermer la modal
     closeModal();  
   }
-});
-
-// Vérifiez si l'élément est bien ciblé et a le focus
-closeEnter.addEventListener("focus", () => {
-  console.log("closeEnter is focused");
 });
 
 const contactButton = document.querySelector(".contact_button");

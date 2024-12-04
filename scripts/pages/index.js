@@ -16,23 +16,20 @@ async function fetchData(url) {   // Methode fetch pour recuperer des data
   }
 }
 
-async function displayPhotographers(photographers) {
-  photographers.forEach((photographer) => {
-    const photographerModel = photographerTemplate(photographer);
-    const userCardDOM = photographerModel.getUserCardDOM();
-
-    // Ajout du photographe à la section
+async function displayPhotographers(photographers) {  // ici on va afficher les profils des photographes / on lui indiquera son param dans init
+  photographers.forEach((photographer) => {           // boucle pour tous les affichers
+    const photographerModel = photographerTemplate(photographer);         // mon template qui va prendre les data du photographers
+    const userCardDOM = photographerModel.getUserCardDOM();             // on affiche dans mon bloc html
     photographersSection.appendChild(userCardDOM);
   });
 
   // Récupérer toutes les divs .allContainer après que le DOM soit mis à jour
   const allContainers = document.querySelectorAll(".allContainer");
-
+console.log(allContainers)
   // Variable pour suivre l'élément actif
   let currentIndex = 0;
 
-  // Mettre le focus et la classe active sur le premier élément
-  // if (allContainers.length > 0) {
+  // if (allContainers.length > 0) {                  // met le focus sur le premier élément .
   //   allContainers[currentIndex].focus();
   //   allContainers[currentIndex].classList.add("active");
   // }
@@ -74,13 +71,11 @@ async function displayPhotographers(photographers) {
     event.preventDefault();
   });
 }
-
 // Fonction d'initialisation
 async function init() {
   const { photographers } = await fetchData(url);
   displayPhotographers(photographers);  // Afficher les photographes après récupération des données
 }
-
 init();
 
 document.addEventListener("keydown", (event) => { 
