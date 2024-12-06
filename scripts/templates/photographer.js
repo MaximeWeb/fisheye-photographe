@@ -69,7 +69,7 @@ function photographerTemplate(data) {     // Template des data PHOTOGRAPHERS et 
 }
 
 function mediaTemplate(data) {
-  const {  mediaLink, title, likes } = data;
+  const { name, mediaLink, title, likes } = data;
   let currentLikes = likes;
   const isVideo = mediaLink.endsWith(".mp4");
 
