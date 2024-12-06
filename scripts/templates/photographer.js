@@ -81,7 +81,7 @@ function mediaTemplate(data) {
           isVideo
             ? `<div class="videoMedia onFocus" tabindex="0">
               <video controls>
-                <source "src="${mediaLink}" type="video/mp4  aria-label="Video de ${name}, ${title}"">
+                <source src="${mediaLink}" type="video/mp4"  aria-label="Video ${title}">
               </video>
             </div>`
             : `<img class="media onFocus" tabindex="0" src="${mediaLink}" alt="Photo de ${name}">`
