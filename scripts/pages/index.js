@@ -8,7 +8,8 @@ async function fetchData(url) {   // Methode fetch pour recuperer des data
     if (!response.ok) {
       throw new Error(`Response status: ${response.status}`);
     }
-    const data = await response.json();     // transforme les data en format json
+    const data = await response.json(); 
+     // transforme les data en format json
     return data;
   } catch (error) {
     console.error(error.message);

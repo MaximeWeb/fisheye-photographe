@@ -100,7 +100,7 @@ async function updateLightboxContent(index) {     // Fonction pour mettre à jou
     ${
       currentMediaIndex.video
         ? `<video controls>
-        <source  src="${mediaLink}" type="video/mp4">
+        <source  src="${mediaLink}" type="video/mp4 aria-label="Video ${currentMediaIndex.title}" ">
         </video>`
         : `<img " src="${mediaLink}" alt="Image ${currentMediaIndex.title}" />` // mon bloc html pour la ligthbox
     }
@@ -115,8 +115,6 @@ function displayLightbox(index) {  // ouvre la lightbox + updateLigthbox qui dem
   updateLightboxContent(currentMediaIndex); // On met a jour la lightbox avec ma fonction updateLightbox
   lightbox.style.display = "block";
   lightboxbg.style.display = "block";
-  
-  
 }
 
 function closeLightbox() { // ferme la ligthbox
@@ -169,6 +167,8 @@ function setupMediaNavigation() {      // fonction afin de navigué avec les fle
         return; 
     }
 
+   
+
     // donner le focus au nouvel élément
     allMediaBlocksFocus[currentMediaIndex].focus();
 
@@ -176,6 +176,16 @@ function setupMediaNavigation() {      // fonction afin de navigué avec les fle
     event.preventDefault();
   });
 }
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Tab") {
+    // Vérifie si la modal est fermée
+    const modalStyle = window.getComputedStyle(modalbg); // Récupère le style effectif de la modal
+    if (modalStyle.display === "none") {
+      event.preventDefault(); // Empêche le comportement par défaut si la modal est fermée
+    }
+  }
+});
 
 async function displayMedia(sortedMedia) {   // fonction que va affiché les media , et récuperer le bon index pour la ligthbox
   const photographer = await getPhotographerById(photographerId);

@@ -8,7 +8,7 @@ function photographerTemplate(data) {     // Template des data PHOTOGRAPHERS et 
     article.innerHTML = ` 
     <div class="allContainer tabindex="0">   
         <div class="imgContainer">
-       <a href="photographer.html?id=${id}">
+       <a href="photographer.html?id=${id}" aria-label="lien pour afficher les medias">
           <img src="${picture}" alt="Photo de ${name}">
           <h2>${name}</h2>
           </a>
@@ -81,7 +81,7 @@ function mediaTemplate(data) {
           isVideo
             ? `<div class="videoMedia onFocus" tabindex="0">
               <video controls>
-                <source "  src="${mediaLink}" type="video/mp4">
+                <source "src="${mediaLink}" type="video/mp4  aria-label="Video de ${name}, ${title}"">
               </video>
             </div>`
             : `<img class="media onFocus" tabindex="0" src="${mediaLink}" alt="Photo de ${name}">`
@@ -90,7 +90,7 @@ function mediaTemplate(data) {
           <h2>${title}</h2>
           <p>
             <span class="likesNumbers">${currentLikes}</span> 
-            <i class="fa-regular fa-heart likeIcon onFocus" tabindex="0"></i>
+            <i class="fa-regular fa-heart likeIcon onFocus" tabindex="0" aria-label="button like"></i>
           </p>
         </div>
       </div>
