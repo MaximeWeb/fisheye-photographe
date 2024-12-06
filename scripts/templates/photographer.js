@@ -69,7 +69,7 @@ function photographerTemplate(data) {     // Template des data PHOTOGRAPHERS et 
 }
 
 function mediaTemplate(data) {
-  const { name, mediaLink, title, likes } = data;
+  const {  mediaLink, title, likes } = data;
   let currentLikes = likes;
   const isVideo = mediaLink.endsWith(".mp4");
 
@@ -84,7 +84,7 @@ function mediaTemplate(data) {
                 <source src="${mediaLink}" type="video/mp4"  aria-label="Video ${title}">
               </video>
             </div>`
-            : `<img class="media onFocus" tabindex="0" src="${mediaLink}" alt="Photo de ${name}">`
+            : `<img class="media onFocus" tabindex="0" src="${mediaLink}" alt="Photo ${title}">`
         }
         <div class="blocTitleLikes">
           <h2>${title}</h2>
